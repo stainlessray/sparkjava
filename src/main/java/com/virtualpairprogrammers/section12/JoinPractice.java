@@ -55,7 +55,6 @@ public class JoinPractice {
         JavaPairRDD<Integer, Integer> chapterCountsRdd = createCountOfCoursesPerChapterRdd(chaptersTable);
         //chapterCountsRdd.collect().forEach(System.out::println);
 
-
         // left join viewsTable > chapterTable
         // Contains userId, and tuple<chapterId, optional<courseId>
         JavaPairRDD<Integer, Tuple2<Integer, Optional<Integer>>> leftJoinedRdd = viewsTable.leftOuterJoin(chaptersTable);
