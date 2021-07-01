@@ -15,7 +15,7 @@ public class WorkbookOne {
     private static final Logger logger = LogManager.getLogger("org.apache");
     private static final String viewsFilePath = "src/main/resources/viewing figures/views-*.csv";
     private static final String chaptersFilePath = "src/main/resources/viewing figures/chapters.csv";
-    private static final int rowCount = 60;
+    private static final int rowCount = 50;
 
     public static void main(String[] args) {
         System.setProperty("hadoop.home.dir", "c:/hadoop");
@@ -43,8 +43,6 @@ public class WorkbookOne {
     }
 
     //todo create a utility method that swaps any pair rdd
-
-
 
 
     /**
