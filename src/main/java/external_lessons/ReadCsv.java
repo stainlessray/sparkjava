@@ -5,9 +5,7 @@ import org.apache.log4j.Logger;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
-import scala.util.parsing.combinator.testing.Str;
 
-import java.util.List;
 
 import static org.apache.log4j.Level.WARN;
 

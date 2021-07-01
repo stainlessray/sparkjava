@@ -35,14 +35,13 @@ public class JoinPractice {
 
         // create an rdd containing a userId and each distinct view of a chapter. (removes duplicate chapter views by the userId)
         JavaPairRDD<Integer, Integer> viewsTableDistinctPerUser = viewsTable.distinct().sortByKey();
-        //viewsTableDistinctPerUser.collect().forEach(System.out::println);
+        viewsTableDistinctPerUser.collect().forEach(System.out::println);
 
         JavaPairRDD<Integer, Integer> chaptersTable = sc.textFile("src/main/resources/viewing figures/chapters.csv")
                 .mapToPair(item -> {
                     String[] columns = item.split(",");
                     return new Tuple2<Integer, Integer>(new Integer(columns[0]), new Integer(columns[1]));
                 });
-
 
 
         // create rdd with the number of chapters per courseId

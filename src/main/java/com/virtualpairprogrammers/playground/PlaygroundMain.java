@@ -29,6 +29,8 @@ public class PlaygroundMain {
     private static final Logger logger = LogManager.getLogger("org.apache");
 
     public static void main(String[] args) {
+        System.setProperty("hadoop.home.dir", "c:/hadoop");
+
         List<String> inputSData = new ArrayList<>();
         inputSData.add("Warn: Tuesday 4 September 0405");
         inputSData.add("Error: Tuesday 4 September 0408");
@@ -36,14 +38,12 @@ public class PlaygroundMain {
         inputSData.add("Error: Friday 7 September 1854");
         inputSData.add("Warn: Saturday 8 September 1942");
 
-
         logger.setLevel(WARN);
 
         SparkConf conf = new SparkConf()
                 .setAppName("startingSpark")
                 .setMaster("local[*]");
         JavaSparkContext sc = new JavaSparkContext(conf);
-
 
         /*
         * reduceByKey() is preferred over groupByKey() for stability reasons

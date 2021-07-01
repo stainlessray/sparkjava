@@ -30,7 +30,6 @@
 			<artifactId>hadoop-hdfs</artifactId>
 			<version>2.2.0</version>
 		</dependency>
-
 	</dependencies>
 
 	<build>
@@ -44,7 +43,7 @@
 					<target>1.8</target>
 				</configuration>
 			</plugin>
-			<plugin>
+<!--			<plugin>
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>3.0.2</version>
 				<configuration>
@@ -55,7 +54,7 @@
 						</manifest>
 					</archive>
 				</configuration>
-			</plugin>
+			</plugin>-->
 		</plugins>
 	</build>
 </project>
