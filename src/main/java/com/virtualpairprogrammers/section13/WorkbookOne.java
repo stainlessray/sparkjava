@@ -42,6 +42,7 @@ public class WorkbookOne {
         outputFirstNRows(chaptersPerCourseRdd, rowCount);
     }
 
+
     //todo create a utility method that swaps any pair rdd
 
 
