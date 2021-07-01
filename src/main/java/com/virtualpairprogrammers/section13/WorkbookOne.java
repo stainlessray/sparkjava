@@ -15,7 +15,7 @@ public class WorkbookOne {
     private static final Logger logger = LogManager.getLogger("org.apache");
     private static final String viewsFilePath = "src/main/resources/viewing figures/views-*.csv";
     private static final String chaptersFilePath = "src/main/resources/viewing figures/chapters.csv";
-    private static int rowCount = 5;
+    private static final int rowCount = 60;
 
     public static void main(String[] args) {
         System.setProperty("hadoop.home.dir", "c:/hadoop");
@@ -44,11 +44,13 @@ public class WorkbookOne {
 
     //todo create a utility method that swaps any pair rdd
 
-    //todo create a utility method that takes the first n rows from rdd and output to screen
+
+
+
     /**
-     * @desc print output sample to screen
+     * desc: print output sample to screen
      * @param input = Pair RDD containing a pair of Integer values
-     * @return null
+     * returns: null
      *
      * **/
     public static void outputFirstNRows(JavaPairRDD<Integer, Integer> input, int rowCount) {
@@ -58,13 +60,13 @@ public class WorkbookOne {
 
     /**
      * @param chaptersRdd = Pair RDD containing all data from chapters csv file
-     * @return new (sorted) rdd containing a count of number of chapters associated with each courseId
+     * returns: new (sorted) rdd containing a count of number of chapters associated with each courseId
      * **/
     private static JavaPairRDD<Integer, Integer> createChapterCountPerCourseRdd(JavaPairRDD<Integer, Integer> chaptersRdd) {
-        JavaPairRDD<Integer, Integer> chaptersPerCourseRdd = chaptersRdd
+        return chaptersRdd
                 .mapToPair( item -> new Tuple2<>( item._2, 1))
                 .reduceByKey((item1, item2) -> item1+item2)
                 .sortByKey();
-        return chaptersPerCourseRdd;
     }
 }
+
