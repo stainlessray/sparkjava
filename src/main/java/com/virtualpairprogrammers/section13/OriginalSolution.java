@@ -9,7 +9,7 @@ import scala.Tuple2;
 
 import static org.apache.log4j.Level.WARN;
 
-public class WorkbookOne {
+public class OriginalSolution {
     private static final Logger logger = LogManager.getLogger("org.apache");
     private static final String viewsFilePath = "src/main/resources/viewing figures/views-*.csv";
     private static final String chaptersFilePath = "src/main/resources/viewing figures/chapters.csv";
@@ -46,15 +46,21 @@ public class WorkbookOne {
                 .reduceByKey((item1, item2) -> item1 + item2)
                 .sortByKey();
 
-        JavaPairRDD<Integer, Tuple2<Long, String>> finalRdd = viewsRdd
+        JavaPairRDD<Integer, Integer> individualChaptersViewedRdd = viewsRdd
                 .mapToPair(item -> new Tuple2<>(item._2, item._1))
-                .distinct()
-                .join(chaptersRdd)
+                .distinct();
+
+        JavaPairRDD<Integer, Tuple2<Integer, Integer>> joinedRdd = individualChaptersViewedRdd.join(chaptersRdd);
+
+        JavaPairRDD<Tuple2<Integer, Integer>, Integer> droppedChapterId = joinedRdd
                 .mapToPair(item -> new Tuple2<>(new Tuple2<>(item._2._1(), item._2._2()), 1))
-                .reduceByKey((item1, item2) -> item1 + item2)
-                .mapToPair(item -> new Tuple2<>(item._1._2(), item._2))
-                .join(chaptersPerCourseRdd)
-                .mapValues(value -> (double) value._1 / value._2)
+                .reduceByKey((item1, item2) -> item1 + item2);
+
+        JavaPairRDD<Integer, Double> percentages = droppedChapterId
+                .mapToPair(item -> new Tuple2<>(item._1._2(), item._2)).join(chaptersPerCourseRdd)
+                .mapValues(value -> (double) value._1 / value._2);
+
+        JavaPairRDD<Integer, Long> scores = percentages
                 .mapValues(value -> {
                     if (value > 0.9) return 10L;
                     if (value > 0.5) return 4L;
@@ -62,6 +68,9 @@ public class WorkbookOne {
                     return 0L;
                 })
                 .reduceByKey((value1, value2) -> value1 + value2)
+                .sortByKey();
+
+        JavaPairRDD<Integer, Tuple2<Long, String>> finalRdd = scores
                 .join(titles)
                 .sortByKey();
 
@@ -70,7 +79,5 @@ public class WorkbookOne {
                         " Course ID: " + item._1 +
                         "\n Course name: " + item._2._2() +
                         "\n Score: " + item._2._1() + "\n"));
-
     }
 }
-
