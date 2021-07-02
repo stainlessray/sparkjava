@@ -19,6 +19,16 @@ public class BasicUtilities {
     }
 
     /**
+     * @param viewsRdd Pair RDD containing a pair of integer values
+     * returns: new rdd containing chapterId as key and each userId who viewed it distinct() format. this requires reversal of the rdd pair
+     * **/
+    public static JavaPairRDD<Integer, Integer> removeDuplicateChapterViews(JavaPairRDD<Integer, Integer> viewsRdd) {
+        return viewsRdd
+                .mapToPair( item -> new Tuple2<>(item._2, item._1))
+                .distinct();
+    }
+
+    /**
      * @param chaptersRdd = Pair RDD containing all data from chapters csv file
      * returns: new (sorted) rdd containing a count of number of chapters associated with each courseId
      * **/
@@ -29,14 +39,5 @@ public class BasicUtilities {
                 .sortByKey();
     }
 
-    /**
-     * desc: return an rdd with each userId as key and each chapterId they viewed in distinct() format (no duplicate chapters listed)
-     * @param individualChaptersViewedRdd Pair RDD named "viewsRdd" containing a pair of integer values
-     * returns: new (sorted) rdd containing userId as key and each chapterId they viewed in distinct() format
-     * **/
-    public static JavaPairRDD<Integer, Integer> removeDuplicateChapterViews(JavaPairRDD<Integer, Integer> individualChaptersViewedRdd) {
-        return individualChaptersViewedRdd
-                .distinct()
-                .sortByKey();
-    }
+
 }
