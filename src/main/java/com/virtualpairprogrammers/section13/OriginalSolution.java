@@ -43,7 +43,7 @@ public class OriginalSolution {
                 });
 
         JavaPairRDD<Integer, Integer> chaptersPerCourseRdd = chaptersRdd.mapToPair(item -> new Tuple2<>(item._2, 1))
-                .reduceByKey((item1, item2) -> item1 + item2)
+                .reduceByKey(Integer::sum)
                 .sortByKey();
 
         JavaPairRDD<Integer, Integer> individualChaptersViewedRdd = viewsRdd
@@ -54,7 +54,7 @@ public class OriginalSolution {
 
         JavaPairRDD<Tuple2<Integer, Integer>, Integer> droppedChapterId = joinedRdd
                 .mapToPair(item -> new Tuple2<>(new Tuple2<>(item._2._1(), item._2._2()), 1))
-                .reduceByKey((item1, item2) -> item1 + item2);
+                .reduceByKey(Integer::sum);
 
         JavaPairRDD<Integer, Double> percentages = droppedChapterId
                 .mapToPair(item -> new Tuple2<>(item._1._2(), item._2)).join(chaptersPerCourseRdd)
@@ -67,7 +67,7 @@ public class OriginalSolution {
                     if (value > 0.25) return 2L;
                     return 0L;
                 })
-                .reduceByKey((value1, value2) -> value1 + value2)
+                .reduceByKey(Long::sum)
                 .sortByKey();
 
         JavaPairRDD<Integer, Tuple2<Long, String>> finalRdd = scores
