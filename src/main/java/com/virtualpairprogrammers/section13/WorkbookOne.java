@@ -43,7 +43,7 @@ public class WorkbookOne {
                 });
 
         JavaPairRDD<Integer, Integer> chaptersPerCourseRdd = chaptersRdd.mapToPair(item -> new Tuple2<>(item._2, 1))
-                .reduceByKey((item1, item2) -> item1 + item2)
+                .reduceByKey(Integer::sum)
                 .sortByKey();
 
         JavaPairRDD<Integer, Tuple2<Long, String>> finalRdd = viewsRdd
@@ -51,7 +51,7 @@ public class WorkbookOne {
                 .distinct()
                 .join(chaptersRdd)
                 .mapToPair(item -> new Tuple2<>(new Tuple2<>(item._2._1(), item._2._2()), 1))
-                .reduceByKey((item1, item2) -> item1 + item2)
+                .reduceByKey(Integer::sum)
                 .mapToPair(item -> new Tuple2<>(item._1._2(), item._2))
                 .join(chaptersPerCourseRdd)
                 .mapValues(value -> (double) value._1 / value._2)
@@ -61,7 +61,7 @@ public class WorkbookOne {
                     if (value > 0.25) return 2L;
                     return 0L;
                 })
-                .reduceByKey((value1, value2) -> value1 + value2)
+                .reduceByKey(Long::sum)
                 .join(titles)
                 .sortByKey();
 
