@@ -16,6 +16,7 @@ public class WorkbookOne {
     private static final Logger logger = LogManager.getLogger("org.apache");
     private static final String viewsFilePath = "src/main/resources/viewing figures/views-*.csv";
     private static final String chaptersFilePath = "src/main/resources/viewing figures/chapters.csv";
+    private static final String titlesFilePath = "src/main/resources/viewing figures/titles.csv";
     private static final int rowCount = 5000;
 
     public static void main(String[] args) {
@@ -62,7 +63,32 @@ public class WorkbookOne {
         JavaPairRDD<Integer, Double> percentages = chaptersViewedOfChaptersAvailable
                 .mapValues( value -> (double)value._1 / value._2);
 
-        percentages.collect().forEach(System.out::println);
+
+        JavaPairRDD<Integer, Long> scores = percentages
+                .mapValues(value -> {
+                    if (value > 0.9) return 10L;
+                    if (value > 0.5) return 4L;
+                    if (value > 0.25) return 2L;
+                    return 0L;
+                })
+                .reduceByKey( (value1, value2) -> value1+value2)
+                .sortByKey();
+
+        JavaPairRDD<Integer, String> titles = sc.textFile(titlesFilePath)
+                .mapToPair( row -> {
+                    String[] columns = row.split(",");
+                    return new Tuple2<>(new Integer(columns[0]), new String(columns[1]));
+                });;
+
+        JavaPairRDD<Integer, Tuple2<Long, String>> finalRdd = scores
+                .join(titles)
+                .sortByKey();
+
+        finalRdd.collect().forEach( item -> System.out.println(
+                "Course Summary: \n" +
+                " Course ID: " + item._1 +
+                "\n Course name: " + item._2._2() +
+                "\n Score: " + item._2._1() + "\n"));
 
 
 
@@ -70,6 +96,7 @@ public class WorkbookOne {
  If a user watches > 50% but <90% , it scores 4
  If a user watches > 25% but < 50% it scores 2
  Less than 25% is no score */
+
 
 /*        droppedChapterId.collect().forEach(System.out::println);
         droppedChapterId.collect().forEach(item -> System.out.println(String.valueOf(item._1 ) + String.valueOf(+ item._2)));*/
