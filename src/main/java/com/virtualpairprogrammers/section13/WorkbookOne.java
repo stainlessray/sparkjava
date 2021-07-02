@@ -1,5 +1,6 @@
 package com.virtualpairprogrammers.section13;
 
+import com.virtualpairprogrammers.BasicUtilities;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.apache.spark.SparkConf;
@@ -38,34 +39,16 @@ public class WorkbookOne {
                     return new Tuple2<>(new Integer(columns[0]), new Integer(columns[1]));
                 });
 
-        JavaPairRDD<Integer, Integer> chaptersPerCourseRdd = createChapterCountPerCourseRdd(chaptersRdd);
-        outputFirstNRows(chaptersPerCourseRdd, rowCount);
+        JavaPairRDD<Integer, Integer> chaptersPerCourseRdd = BasicUtilities.createChapterCountPerCourseRdd(chaptersRdd);
+        JavaPairRDD<Integer, Integer> individualChaptersViewedRdd = BasicUtilities.removeDuplicateChapterViews(viewsRdd);
+        BasicUtilities.outputFirstNRows(individualChaptersViewedRdd, rowCount);
     }
+
+
 
 
     //todo create a utility method that swaps any pair rdd
 
 
-    /**
-     * desc: print output sample to screen
-     * @param input = Pair RDD containing a pair of Integer values
-     * returns: null
-     *
-     * **/
-    public static void outputFirstNRows(JavaPairRDD<Integer, Integer> input, int rowCount) {
-        List<Tuple2<Integer, Integer>> results = input.take(rowCount);
-        results.forEach(System.out::println);
-    }
-
-    /**
-     * @param chaptersRdd = Pair RDD containing all data from chapters csv file
-     * returns: new (sorted) rdd containing a count of number of chapters associated with each courseId
-     * **/
-    private static JavaPairRDD<Integer, Integer> createChapterCountPerCourseRdd(JavaPairRDD<Integer, Integer> chaptersRdd) {
-        return chaptersRdd
-                .mapToPair( item -> new Tuple2<>( item._2, 1))
-                .reduceByKey((item1, item2) -> item1+item2)
-                .sortByKey();
-    }
 }
 
