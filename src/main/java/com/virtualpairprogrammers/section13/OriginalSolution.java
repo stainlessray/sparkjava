@@ -50,7 +50,8 @@ public class OriginalSolution {
                 .mapToPair(item -> new Tuple2<>(item._2, item._1))
                 .distinct();
 
-        JavaPairRDD<Integer, Tuple2<Integer, Integer>> joinedRdd = individualChaptersViewedRdd.join(chaptersRdd);
+        JavaPairRDD<Integer, Tuple2<Integer, Integer>> joinedRdd = individualChaptersViewedRdd
+                .join(chaptersRdd);
 
         JavaPairRDD<Tuple2<Integer, Integer>, Integer> droppedChapterId = joinedRdd
                 .mapToPair(item -> new Tuple2<>(new Tuple2<>(item._2._1(), item._2._2()), 1))
