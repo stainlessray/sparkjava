@@ -16,7 +16,7 @@ public class WorkbookOne {
     private static final String titlesFilePath = "src/main/resources/viewing figures/titles.csv";
 
     public static void main(String[] args) {
-        System.setProperty("hadoop.home.dir", "c:/hadoop");
+        System.setProperty("hadoop.home.dir", "c:/hadoop-3.1.0");
         logger.setLevel(WARN);
 
         SparkConf conf = new SparkConf()
@@ -43,7 +43,7 @@ public class WorkbookOne {
                 });
 
         JavaPairRDD<Integer, Integer> chaptersPerCourseRdd = chaptersRdd.mapToPair(item -> new Tuple2<>(item._2, 1))
-                .reduceByKey(Integer::sum)
+                .reduceByKey((a, b) -> Integer.sum(a, b))
                 .sortByKey();
 
         JavaPairRDD<Integer, Tuple2<Long, String>> finalRdd = viewsRdd
@@ -51,7 +51,7 @@ public class WorkbookOne {
                 .distinct()
                 .join(chaptersRdd)
                 .mapToPair(item -> new Tuple2<>(new Tuple2<>(item._2._1(), item._2._2()), 1))
-                .reduceByKey(Integer::sum)
+                .reduceByKey((a, b) -> Integer.sum(a, b))
                 .mapToPair(item -> new Tuple2<>(item._1._2(), item._2))
                 .join(chaptersPerCourseRdd)
                 .mapValues(value -> (double) value._1 / value._2)
