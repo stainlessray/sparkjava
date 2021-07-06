@@ -53,25 +53,25 @@ public class OriginalSolution {
         JavaPairRDD<Integer, Tuple2<Integer, Integer>> joinedRdd = individualChaptersViewedRdd
                 .join(chaptersRdd);
 
-        JavaPairRDD<Tuple2<Integer, Integer>, Integer> droppedChapterId = joinedRdd
+        JavaPairRDD<Tuple2<Integer, Integer>, Integer> viewsByUser = joinedRdd
                 .mapToPair(item -> new Tuple2<>(new Tuple2<>(item._2._1(), item._2._2()), 1))
                 .reduceByKey(Integer::sum);
 
-        JavaPairRDD<Integer, Double> percentages = droppedChapterId
+        JavaPairRDD<Integer, Double> percentages = viewsByUser
                 .mapToPair(item -> new Tuple2<>(item._1._2(), item._2)).join(chaptersPerCourseRdd)
                 .mapValues(value -> (double) value._1 / value._2);
 
-        JavaPairRDD<Integer, Long> scores = percentages
+        JavaPairRDD<Integer, Integer> scores = percentages
                 .mapValues(value -> {
-                    if (value > 0.9) return 10L;
-                    if (value > 0.5) return 4L;
-                    if (value > 0.25) return 2L;
-                    return 0L;
+                    if (value > 0.9) return 10;
+                    if (value > 0.5) return 4;
+                    if (value > 0.25) return 2;
+                    return 0;
                 })
-                .reduceByKey(Long::sum)
+                .reduceByKey(Integer::sum)
                 .sortByKey();
 
-        JavaPairRDD<Integer, Tuple2<Long, String>> finalRdd = scores
+        JavaPairRDD<Integer, Tuple2<Integer, String>> finalRdd = scores
                 .join(titles)
                 .sortByKey();
 
